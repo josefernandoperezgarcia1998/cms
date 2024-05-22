@@ -49,15 +49,15 @@ class PaginaController extends Controller
             'fecha_actualizacion' => 'nullable|date',
             'fuente' => 'nullable|string|max:255',
         ]);
-
+    
         $validated['activo'] = $request->has('activo');
-
+    
         if ($request->hasFile('imagen_destacada')) {
             $validated['imagen_destacada'] = $this->guardarImagenDestacada($request->file('imagen_destacada'));
         }
-
+    
         Pagina::create($validated);
-
+    
         return redirect()->route('paginas.index')->with('success', 'Página creada exitosamente');
     }
     
@@ -85,20 +85,20 @@ class PaginaController extends Controller
             'fecha_actualizacion' => 'nullable|date',
             'fuente' => 'nullable|string|max:255',
         ]);
-
+    
         $validated['activo'] = $request->has('activo');
-
+    
         if ($request->hasFile('imagen_destacada')) {
             // Eliminar la imagen anterior si existe
             if ($pagina->imagen_destacada) {
                 Storage::disk('public')->delete($pagina->imagen_destacada);
             }
-
+    
             $validated['imagen_destacada'] = $this->guardarImagenDestacada($request->file('imagen_destacada'));
         }
-
+    
         $pagina->update($validated);
-
+    
         return redirect()->route('paginas.edit', $pagina->id)->with('success', 'Página actualizada de forma correcta');
     }
     
@@ -137,7 +137,6 @@ class PaginaController extends Controller
         }
     }
     
-
     private function guardarImagenDestacada($file)
     {
         $folder = 'paginas/imagenes_destacadas';
@@ -151,4 +150,26 @@ class PaginaController extends Controller
         return $filePath;
     }
     
+    public function uploadImage(Request $request)
+    {
+        if ($request->hasFile('upload')) {
+            $file = $request->file('upload');
+            $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('ckeditor/images', $filename, 'public');
+    
+            $url = Storage::disk('public')->url($path);
+    
+            return response()->json([
+                'uploaded' => true,
+                'url' => $url
+            ]);
+        }
+    
+        return response()->json([
+            'uploaded' => false,
+            'error' => [
+                'message' => 'No file uploaded.'
+            ]
+        ]);
+    }
 }

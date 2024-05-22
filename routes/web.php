@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Route;
 // Módulo de paginas
 Route::resource('paginas', PaginaController::class);
 
+// CKEDITOR imágenes
+Route::post('ckeditor/upload', [PaginaController::class, 'uploadImage'])->name('ckeditor.upload');
+
 // Módulo de archivos
 Route::post('archivos', [ArchivoController::class, 'store'])->name('archivos.store');
 Route::resource('archivos', ArchivoController::class)->only([

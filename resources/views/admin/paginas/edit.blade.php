@@ -42,7 +42,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="contenido" class="form-label">Contenido</label>
-                    <textarea name="contenido" class="form-control @error('contenido') is-invalid @enderror">{{ old('contenido', $pagina->contenido) }}</textarea>
+                    <textarea name="contenido" id="contenido" class="form-control @error('contenido') is-invalid @enderror">{{ old('contenido', $pagina->contenido) }}</textarea>
                     @error('contenido')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -401,4 +401,46 @@
         </div>
     </div>
 </div>
+</div>
+@endsection
+
+@section('js')
+<script>
+    // CKEditor initialization
+    document.addEventListener('DOMContentLoaded', function() {
+        ClassicEditor
+            .create(document.querySelector('#contenido'), {
+                ckfinder: {
+                    uploadUrl: '{{ route('ckeditor.upload').'?_token='.csrf_token() }}'
+                },
+                toolbar: [
+                    'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote', '|', 'insertTable', 'tableColumn', 'tableRow', 'mergeTableCells', '|', 'undo', 'redo', 'imageUpload'
+                ]
+            })
+            .then(editor => {
+                const model = editor.model;
+                const doc = model.document;
+
+                doc.on('change:data', () => {
+                    model.change(writer => {
+                        for (const item of doc.getRoot().getChildren()) {
+                            if (item.is('element', 'paragraph')) {
+                                for (const link of item.getChildren()) {
+                                    if (link.is('element', 'a')) {
+                                        const href = link.getAttribute('href');
+                                        if (href && !href.startsWith('http://') && !href.startsWith('https://')) {
+                                            writer.setAttribute('href', 'http://' + href, link);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                });
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    });
+</script>
 @endsection
