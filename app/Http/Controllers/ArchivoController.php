@@ -15,7 +15,7 @@ class ArchivoController extends Controller
     {
         $validated = $request->validate([
             'nombre' => 'required|string|max:255',
-            'archivo' => 'required|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt|max:20480', // 20MB max
+            'archivo' => 'required|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt,png,jpg|max:20480', // 20MB max
             'ordenamiento' => 'required|integer',
             'entity_id' => 'required|integer',
             'entity_type' => 'required|string|in:pagina,seccion,subseccion'
@@ -71,7 +71,7 @@ class ArchivoController extends Controller
     {
         $validated = $request->validate([
             'nombre' => 'required|string|max:255',
-            'archivo' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt|max:20480', // 20MB max
+            'archivo' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt,png,jpg|max:20480', // 20MB max
             'ordenamiento' => 'required|integer',
             'activo' => 'nullable|boolean',
         ]);
@@ -123,11 +123,16 @@ class ArchivoController extends Controller
 
     public function destroy(Archivo $archivo)
     {
-        // Eliminar el archivo del servidor
-        Storage::disk('public')->delete($archivo->path);
+        try {
+             // Eliminar el archivo del servidor
+            Storage::disk('public')->delete($archivo->path);
 
-        $archivo->delete();
-        return redirect()->back();
+            $archivo->delete();
+            return redirect()->back()->with('success', 'Archivo eliminado correctamente');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('success', 'No se pudo eliminar archivo');
+        }
+       
     }
 
     public function tamanoArchivo($file)

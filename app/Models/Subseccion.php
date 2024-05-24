@@ -10,7 +10,7 @@ class Subseccion extends Model
     use HasFactory;
 
     protected $fillable = [
-        'seccion_id', 'titulo', 'ordenamiento', 'activo'
+        'seccion_id', 'titulo', 'slug', 'ordenamiento', 'activo'
     ];
 
     public function archivos()

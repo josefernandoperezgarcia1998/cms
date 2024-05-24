@@ -90,6 +90,74 @@
         </div>
     @endif
 
+    <!-- Sección de Secciones -->
+    {{-- <h2 class="my-4 text-center">Secciones</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow rounded-3 mb-4">
+                <div class="card-header">
+                    <h3>Crear Sección</h3>
+                </div>
+                <div class="card-body">
+                    <form action="{{ route('paginas.secciones.store', $pagina) }}" method="POST">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="titulo" class="form-label">Título de la Sección</label>
+                            <input type="text" name="titulo" class="form-control @error('titulo') is-invalid @enderror" value="{{ old('titulo') }}" required>
+                            @error('titulo')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label for="ordenamiento" class="form-label">Ordenamiento</label>
+                            <input type="number" name="ordenamiento" class="form-control @error('ordenamiento') is-invalid @enderror" value="{{ old('ordenamiento') }}" required>
+                            @error('ordenamiento')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="form-check mb-3">
+                            <input type="checkbox" name="activo" class="form-check-input @error('activo') is-invalid @enderror" id="activoSeccion" {{ old('activo', true) ? 'checked' : '' }}>
+                            <label for="activoSeccion" class="form-check-label">Activo</label>
+                            @error('activo')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <button type="submit" class="btn btn-primary">Crear Sección</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow rounded-3 mb-4">
+                <div class="card-header">
+                    <h3>Lista de Secciones</h3>
+                </div>
+                <div class="card-body">
+                    @if ($pagina->secciones->count())
+                    <ul class="list-group">
+                        @foreach($pagina->secciones as $seccion)
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ $seccion->titulo }}
+                            <div>
+                                <a href="{{ route('paginas.secciones.edit', [$pagina, $seccion]) }}" class="btn btn-warning btn-sm">Editar</a>
+                                <form action="{{ route('paginas.secciones.destroy', [$pagina, $seccion]) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                                </form>
+                            </div>
+                        </li>
+                        @endforeach
+                    </ul>
+                    @else
+                    <p>No se encontraron secciones.</p>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div> --}}
+
+    <!-- Sección de Archivos -->
     <h2 class="my-4 text-center">Archivos</h2>
     <div class="row">
         <div class="col-md-6">
@@ -256,6 +324,7 @@
         </div>
     </div>
 
+    <!-- Sección de Enlaces -->
     <h2 class="my-4 text-center">Enlaces</h2>
     <div class="row">
         <div class="col-md-6">
@@ -406,41 +475,40 @@
 
 @section('js')
 <script>
-    // CKEditor initialization
-    document.addEventListener('DOMContentLoaded', function() {
-        ClassicEditor
-            .create(document.querySelector('#contenido'), {
-                ckfinder: {
-                    uploadUrl: '{{ route('ckeditor.upload').'?_token='.csrf_token() }}'
-                },
-                toolbar: [
-                    'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote', '|', 'insertTable', 'tableColumn', 'tableRow', 'mergeTableCells', '|', 'undo', 'redo', 'imageUpload'
-                ]
-            })
-            .then(editor => {
-                const model = editor.model;
-                const doc = model.document;
+    $(document).ready(function() {
+        // Cargar CKEditor
+        ClassicEditor.create(document.querySelector("#contenido"), {
+            ckfinder: {
+                uploadUrl: "{{ route('ckeditor.upload') . '?_token=' . csrf_token() }}"
+            },
+            toolbar: [
+                "heading", "|", "bold", "italic", "link", "bulletedList", "numberedList", "blockQuote", "|", "insertTable", "tableColumn", "tableRow", "mergeTableCells", "|", "undo", "redo", "imageUpload"
+            ]
+        })
+        .then(editor => {
+            const model = editor.model;
+            const doc = model.document;
 
-                doc.on('change:data', () => {
-                    model.change(writer => {
-                        for (const item of doc.getRoot().getChildren()) {
-                            if (item.is('element', 'paragraph')) {
-                                for (const link of item.getChildren()) {
-                                    if (link.is('element', 'a')) {
-                                        const href = link.getAttribute('href');
-                                        if (href && !href.startsWith('http://') && !href.startsWith('https://')) {
-                                            writer.setAttribute('href', 'http://' + href, link);
-                                        }
+            doc.on("change:data", () => {
+                model.change(writer => {
+                    for (const item of doc.getRoot().getChildren()) {
+                        if (item.is("element", "paragraph")) {
+                            for (const link of item.getChildren()) {
+                                if (link.is("element", "a")) {
+                                    const href = link.getAttribute("href");
+                                    if (href && !href.startsWith("http://") && !href.startsWith("https://")) {
+                                        writer.setAttribute("href", "http://" + href, link);
                                     }
                                 }
                             }
                         }
-                    });
+                    }
                 });
-            })
-            .catch(error => {
-                console.error(error);
             });
+        })
+        .catch(error => {
+            console.error(error);
+        });
     });
 </script>
 @endsection

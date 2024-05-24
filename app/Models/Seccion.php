@@ -10,8 +10,10 @@ class Seccion extends Model
     use HasFactory;
 
     protected $fillable = [
-        'pagina_id', 'titulo', 'ordenamiento', 'activo'
+        'pagina_id', 'titulo', 'slug', 'ordenamiento', 'activo'
     ];
+
+    protected $table = 'secciones';
 
     public function subsecciones()
     {
@@ -20,7 +22,12 @@ class Seccion extends Model
 
     public function archivos()
     {
-        return $this->morphMany(Archivo::class, 'archivable');
+        return $this->hasMany(Archivo::class);
+    }
+
+    public function enlaces()
+    {
+        return $this->hasMany(Enlace::class);
     }
 
     public function pagina()

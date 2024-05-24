@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('pagina_id')->constrained('paginas');
             $table->string('titulo');
+            $table->string('slug');
             $table->integer('ordenamiento');
-            $table->boolean('activo')->default(true);
+            $table->boolean('activo');
             $table->timestamps();
         });
     }

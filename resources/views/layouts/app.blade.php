@@ -34,11 +34,11 @@
         @yield('content')
     </main>
     <!-- Bootstrap 5 JS Bundle with Popper -->
-    {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script> --}}
     <script src="{{asset('assets/layout-admin/js/bootstrap-5.js')}}"></script>
     <!--CKEDITOR CDN -->
-    {{-- <script src="https://cdn.ckeditor.com/ckeditor5/34.1.0/classic/ckeditor.js"></script> --}}
     <script src="{{asset('assets/layout-admin/js/ckeditor.js')}}"></script>
+    <!--Jquery 3.6.0 -->
+    <script src="{{asset('assets/layout-admin/js/jquery3-6-0.js')}}"></script>
     @yield('js')
 </body>
 </html>

@@ -75,49 +75,50 @@
 
 @section('js')
 <script>
-    document.getElementById('titulo').addEventListener('input', function() {
-        var slug = this.value.toLowerCase()
-            .replace(/[^\w\s-]/g, '')
-            .replace(/[\s_-]+/g, '-')
-            .replace(/^-+|-+$/g, '');
-        document.getElementById('slug').value = slug;
-    });
+    $(document).ready(function() {
+        // Convertir a slug
+        $("#titulo").keyup(function() {
+            var text = $(this).val();
+            text = text.toLowerCase();
+            text = text.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // Remove diacritics
+            text = text.replace(/[^a-zA-Z0-9]+/g, '-');
+            text = text.replace(/^-+|-+$/g, ''); // Remove leading or trailing hyphens
+            $("#slug").val(text);        
+        });
 
-    // Cargar CKEditor desde CDN
-    document.addEventListener('DOMContentLoaded', function() {
-        ClassicEditor
-            .create(document.querySelector('#contenido'), {
-                ckfinder: {
-                    uploadUrl: '{{ route('ckeditor.upload').'?_token='.csrf_token() }}'
-                },
-                toolbar: [
-                    'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote', '|', 'insertTable', 'tableColumn', 'tableRow', 'mergeTableCells', '|', 'undo', 'redo', 'imageUpload'
-                ]
-            })
-            .then(editor => {
-                const model = editor.model;
-                const doc = model.document;
+        // Cargar CKEditor
+        ClassicEditor.create(document.querySelector("#contenido"), {
+            ckfinder: {
+                uploadUrl: "{{ route('ckeditor.upload') . '?_token=' . csrf_token() }}"
+            },
+            toolbar: [
+                "heading", "|", "bold", "italic", "link", "bulletedList", "numberedList", "blockQuote", "|", "insertTable", "tableColumn", "tableRow", "mergeTableCells", "|", "undo", "redo", "imageUpload"
+            ]
+        })
+        .then(editor => {
+            const model = editor.model;
+            const doc = model.document;
 
-                doc.on('change:data', () => {
-                    model.change(writer => {
-                        for (const item of doc.getRoot().getChildren()) {
-                            if (item.is('element', 'paragraph')) {
-                                for (const link of item.getChildren()) {
-                                    if (link.is('element', 'a')) {
-                                        const href = link.getAttribute('href');
-                                        if (href && !href.startsWith('http://') && !href.startsWith('https://')) {
-                                            writer.setAttribute('href', 'http://' + href, link);
-                                        }
+            doc.on("change:data", () => {
+                model.change(writer => {
+                    for (const item of doc.getRoot().getChildren()) {
+                        if (item.is("element", "paragraph")) {
+                            for (const link of item.getChildren()) {
+                                if (link.is("element", "a")) {
+                                    const href = link.getAttribute("href");
+                                    if (href && !href.startsWith("http://") && !href.startsWith("https://")) {
+                                        writer.setAttribute("href", "http://" + href, link);
                                     }
                                 }
                             }
                         }
-                    });
+                    }
                 });
-            })
-            .catch(error => {
-                console.error(error);
             });
+        })
+        .catch(error => {
+            console.error(error);
+        });
     });
 </script>
 @endsection

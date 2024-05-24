@@ -46,6 +46,9 @@ class PaginaController extends Controller
             'imagen_destacada' => 'nullable|file|mimes:jpeg,png,jpg|max:20480', // 20MB max
             'contenido' => 'nullable|string',
             'slug' => 'required|string|unique:paginas,slug',
+            'seo_titulo' => 'nullable',
+            'seo_keywords' => 'nullable',
+            'seo_descripcion' => 'nullable',
             'fecha_actualizacion' => 'nullable|date',
             'fuente' => 'nullable|string|max:255',
         ]);
@@ -82,6 +85,9 @@ class PaginaController extends Controller
             'imagen_destacada' => 'nullable|file|mimes:jpeg,png,jpg|max:20480', // 20MB max
             'contenido' => 'nullable|string',
             'slug' => 'required|string|unique:paginas,slug,' . $pagina->id,
+            'seo_titulo' => 'nullable',
+            'seo_keywords' => 'nullable',
+            'seo_descripcion' => 'nullable',
             'fecha_actualizacion' => 'nullable|date',
             'fuente' => 'nullable|string|max:255',
         ]);

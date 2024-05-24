@@ -17,6 +17,9 @@ return new class extends Migration
             $table->string('imagen_destacada')->nullable();
             $table->text('contenido')->nullable();
             $table->string('slug');
+            $table->string('seo_titulo')->nullable();
+            $table->string('seo_keywords')->nullable();
+            $table->string('seo_descripcion')->nullable();
             $table->timestamp('fecha_actualizacion')->nullable();
             $table->string('fuente')->nullable();
             $table->boolean('activo');

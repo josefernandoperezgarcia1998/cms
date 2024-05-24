@@ -10,7 +10,7 @@ class Pagina extends Model
     use HasFactory;
 
     protected $fillable = [
-        'titulo', 'imagen_destacada', 'contenido', 'slug', 'fecha_actualizacion', 'fuente', 'activo'
+        'titulo', 'imagen_destacada', 'contenido', 'slug', 'seo_titulo', 'seo_descripcion', 'seo_keywords', 'fecha_actualizacion', 'fuente', 'activo'
     ];
 
     protected $dates = ['fecha_actualizacion'];

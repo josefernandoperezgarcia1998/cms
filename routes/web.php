@@ -24,10 +24,16 @@ Route::post('{type}/{id}/enlaces', [EnlaceController::class, 'store'])->name('en
 Route::put('{type}/{id}/enlaces/{enlace}', [EnlaceController::class, 'update'])->name('enlaces.update');
 Route::delete('{type}/{id}/enlaces/{enlace}', [EnlaceController::class, 'destroy'])->name('enlaces.destroy');
 
-/* ---------------------------------------- */
-
 // Rutas anidadas para secciones dentro de páginas
-Route::resource('paginas.secciones', SeccionController::class)->except(['index', 'show']);
+Route::resource('paginas.secciones', SeccionController::class)->parameters([
+    'secciones' => 'seccion',
+])->except(['show']);
+
+// Contenido (Archivos y Enlacse) de secciones
+Route::get('paginas/{pagina}/secciones/{seccion}/contenido', [SeccionController::class, 'contenido'])->name('secciones.contenido');
+
+
+/* ---------------------------------------- */
 
 // Rutas anidadas para subsecciones dentro de secciones
 Route::resource('secciones.subsecciones', SubseccionController::class)->except(['index', 'show']);
@@ -39,4 +45,3 @@ Route::resource('secciones.archivos', ArchivoController::class)->only(['store', 
 Route::resource('secciones.enlaces', EnlaceController::class)->only(['store', 'destroy']);
 Route::resource('subsecciones.archivos', ArchivoController::class)->only(['store', 'destroy']);
 Route::resource('subsecciones.enlaces', EnlaceController::class)->only(['store', 'destroy']);
-

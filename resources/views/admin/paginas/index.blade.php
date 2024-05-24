@@ -38,6 +38,7 @@
                         <td>{{ $pagina->slug }}</td>
                         <td class="d-flex justify-content-center flex-wrap">
                             <a href="{{ route('paginas.edit', $pagina) }}" class="btn btn-warning btn-sm me-1 mb-1">Editar</a>
+                            <a href="{{ route('paginas.secciones.index', $pagina) }}" class="btn btn-info btn-sm me-1 mb-1">Secciones</a>
                             <button type="button" class="btn btn-danger btn-sm mb-1" data-bs-toggle="modal" data-bs-target="#deletePageModal{{ $pagina->id }}">Eliminar</button>
                         </td>
                     </tr>
