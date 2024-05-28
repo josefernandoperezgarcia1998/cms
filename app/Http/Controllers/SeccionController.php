@@ -36,7 +36,7 @@ class SeccionController extends Controller
     {
         $validated = $request->validate([
             'titulo' => 'required|string|max:255',
-            'slug' => 'required|string|unique:secciones,slug',
+            'slug' => 'required|string',
             'ordenamiento' => 'required|integer',
         ]);
 

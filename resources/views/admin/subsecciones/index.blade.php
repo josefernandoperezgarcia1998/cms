@@ -12,24 +12,33 @@
             {{ session('error') }}
         </div>
     @endif
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ route('paginas.index') }}">Páginas</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('paginas.secciones.index', $seccion->pagina) }}">Secciones</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Subsecciones de la Sección: {{ $seccion->titulo }}</li>
+        </ol>
+    </nav>
 
-    <h1 class="my-4 text-center">Secciones de la Página: {{ $pagina->titulo }}</h1>
+    <h1 class="my-4 text-center">Subsecciones de la Sección: {{ $seccion->titulo }}</h1>
+
     <div class="d-flex justify-content-between mb-4">
-        <a href="{{ route('paginas.index') }}" class="btn btn-secondary">Regresar a Páginas</a>
+        <a href="{{ route('paginas.secciones.index', $seccion->pagina) }}" class="btn btn-secondary">Regresar a Secciones</a>
         <div class="d-flex ms-auto">
-            <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#createSeccionModal">
-                Crear Sección
+            <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#createSubseccionModal">
+                Crear Subsección
             </button>
-            <form action="{{ route('paginas.secciones.index', $pagina) }}" method="GET" class="d-flex">
+            <form action="{{ route('secciones.subsecciones.index', $seccion) }}" method="GET" class="d-flex">
                 <input type="text" name="search" class="form-control me-2" placeholder="Buscar..." value="{{ $search }}">
                 <button type="submit" class="btn btn-outline-secondary">Buscar</button>
             </form>
         </div>
     </div>
+
     <div class="card shadow rounded-3">
         <div class="card-body">
-            @if($secciones->isEmpty())
-                <p class="text-center">No hay secciones.</p>
+            @if($subsecciones->isEmpty())
+                <p class="text-center">No hay subsecciones.</p>
             @else
                 <table class="table table-hover table-responsive-sm text-center">
                     <thead class="table-dark">
@@ -42,58 +51,56 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($secciones as $seccion)
+                        @foreach($subsecciones as $subseccion)
                         <tr>
-                            <td>{{ $seccion->titulo }}</td>
-                            <td>{{ $seccion->slug }}</td>
-                            <td>{{ $seccion->ordenamiento }}</td>
-                            <td>{{ $seccion->activo ? 'Sí' : 'No' }}</td>
+                            <td>{{ $subseccion->titulo }}</td>
+                            <td>{{ $subseccion->slug }}</td>
+                            <td>{{ $subseccion->ordenamiento }}</td>
+                            <td>{{ $subseccion->activo ? 'Sí' : 'No' }}</td>
                             <td class="d-flex justify-content-center flex-wrap">
-                                <button type="button" class="btn btn-warning btn-sm me-1 mb-1" data-bs-toggle="modal" data-bs-target="#editSeccionModal{{ $seccion->id }}">Editar</button>
-                                <a href="{{ route('secciones.contenido', [$pagina->id, $seccion->id]) }}" class="btn btn-info btn-sm mb-1">Contenido</a>
+                                <button type="button" class="btn btn-warning btn-sm me-1 mb-1" data-bs-toggle="modal" data-bs-target="#editSubseccionModal{{ $subseccion->id }}">Editar</button>
+                                <a href="{{ route('subsecciones.contenido', [$seccion->id, $subseccion->id]) }}" class="btn btn-info btn-sm mb-1">Contenido</a>
                                 &nbsp;
-                                <a href="{{ route('secciones.subsecciones.index', $seccion->id) }}" class="btn btn-secondary btn-sm mb-1">Subsecciones</a>
-                                &nbsp;
-                                <button type="button" class="btn btn-danger btn-sm mb-1" data-bs-toggle="modal" data-bs-target="#deleteSeccionModal{{ $seccion->id }}">Eliminar</button>
+                                <button type="button" class="btn btn-danger btn-sm mb-1" data-bs-toggle="modal" data-bs-target="#deleteSubseccionModal{{ $subseccion->id }}">Eliminar</button>
                             </td>
                         </tr>
 
-                        <!-- Modal para editar sección -->
-                        <div class="modal fade" id="editSeccionModal{{ $seccion->id }}" tabindex="-1" aria-labelledby="editSeccionModalLabel{{ $seccion->id }}" aria-hidden="true">
+                        <!-- Modal para editar subsección -->
+                        <div class="modal fade" id="editSubseccionModal{{ $subseccion->id }}" tabindex="-1" aria-labelledby="editSubseccionModalLabel{{ $subseccion->id }}" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="editSeccionModalLabel{{ $seccion->id }}">Editar Sección</h5>
+                                        <h5 class="modal-title" id="editSubseccionModalLabel{{ $subseccion->id }}">Editar Subsección</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
-                                    <form action="{{ route('paginas.secciones.update', [$pagina, $seccion->id]) }}" method="POST">
+                                    <form action="{{ route('secciones.subsecciones.update', [$seccion, $subseccion]) }}" method="POST">
                                         @csrf
                                         @method('PUT')
                                         <div class="modal-body">
                                             <div class="mb-3">
-                                                <label for="titulo{{ $seccion->id }}" class="form-label">Título</label>
-                                                <input type="text" name="titulo" class="form-control @error('titulo') is-invalid @enderror" id="titulo{{ $seccion->id }}" value="{{ old('titulo', $seccion->titulo) }}" required>
+                                                <label for="titulo{{ $subseccion->id }}" class="form-label">Título</label>
+                                                <input type="text" name="titulo" class="form-control @error('titulo') is-invalid @enderror" id="titulo{{ $subseccion->id }}" value="{{ old('titulo', $subseccion->titulo) }}" required>
                                                 @error('titulo')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="mb-3">
-                                                <label for="slug{{ $seccion->id }}" class="form-label">Slug</label>
-                                                <input type="text" name="slug" class="form-control @error('slug') is-invalid @enderror" id="slug{{ $seccion->id }}" value="{{ old('slug', $seccion->slug) }}" readonly required>
+                                                <label for="slug{{ $subseccion->id }}" class="form-label">Slug</label>
+                                                <input type="text" name="slug" class="form-control @error('slug') is-invalid @enderror" id="slug{{ $subseccion->id }}" value="{{ old('slug', $subseccion->slug) }}" readonly required>
                                                 @error('slug')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="mb-3">
-                                                <label for="ordenamiento{{ $seccion->id }}" class="form-label">Ordenamiento</label>
-                                                <input type="number" name="ordenamiento" class="form-control @error('ordenamiento') is-invalid @enderror" id="ordenamiento{{ $seccion->id }}" value="{{ old('ordenamiento', $seccion->ordenamiento) }}" required>
+                                                <label for="ordenamiento{{ $subseccion->id }}" class="form-label">Ordenamiento</label>
+                                                <input type="number" name="ordenamiento" class="form-control @error('ordenamiento') is-invalid @enderror" id="ordenamiento{{ $subseccion->id }}" value="{{ old('ordenamiento', $subseccion->ordenamiento) }}" required>
                                                 @error('ordenamiento')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="form-check mb-3">
-                                                <input type="checkbox" name="activoEditar" class="form-check-input @error('activoEditar') is-invalid @enderror" id="activoEditar{{ $seccion->id }}" {{ old('activoEditar', $seccion->activo) ? 'checked' : '' }}>
-                                                <label for="activoEditar{{ $seccion->id }}" class="form-check-label">Activo</label>
+                                                <input type="checkbox" name="activoEditar" class="form-check-input @error('activoEditar') is-invalid @enderror" id="activoEditar{{ $subseccion->id }}" {{ old('activoEditar', $subseccion->activo) ? 'checked' : '' }}>
+                                                <label for="activoEditar{{ $subseccion->id }}" class="form-check-label">Activo</label>
                                                 @error('activoEditar')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
@@ -109,19 +116,19 @@
                         </div>
 
                         <!-- Modal para confirmar eliminación -->
-                        <div class="modal fade" id="deleteSeccionModal{{ $seccion->id }}" tabindex="-1" aria-labelledby="deleteSeccionModalLabel{{ $seccion->id }}" aria-hidden="true">
+                        <div class="modal fade" id="deleteSubseccionModal{{ $subseccion->id }}" tabindex="-1" aria-labelledby="deleteSubseccionModalLabel{{ $subseccion->id }}" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="deleteSeccionModalLabel{{ $seccion->id }}">Confirmar Eliminación</h5>
+                                        <h5 class="modal-title" id="deleteSubseccionModalLabel{{ $subseccion->id }}">Confirmar Eliminación</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <p>¿Está seguro de que desea eliminar la sección "<strong>{{ $seccion->titulo }}</strong>" de la página "<strong>{{ $pagina->titulo }}</strong>"?</p>
+                                        <p>¿Está seguro de que desea eliminar la subsección "<strong>{{ $subseccion->titulo }}</strong>" de la sección "<strong>{{ $seccion->titulo }}</strong>" de la página "<strong>{{ $seccion->pagina->titulo }}</strong>"?</p>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                        <form action="{{ route('paginas.secciones.destroy', [$pagina, $seccion->id]) }}" method="POST" style="display:inline;">
+                                        <form action="{{ route('secciones.subsecciones.destroy', [$seccion, $subseccion]) }}" method="POST" style="display:inline;">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-danger">Eliminar</button>
@@ -137,19 +144,19 @@
             @endif
         </div>
         <div class="card-footer d-flex justify-content-center">
-            {{ $secciones->links('pagination::bootstrap-5') }}
+            {{ $subsecciones->links('pagination::bootstrap-5') }}
         </div>
     </div>
 
-    <!-- Modal para crear secciones -->
-    <div class="modal fade" id="createSeccionModal" tabindex="-1" aria-labelledby="createSeccionModalLabel" aria-hidden="true">
+    <!-- Modal para crear subsecciones -->
+    <div class="modal fade" id="createSubseccionModal" tabindex="-1" aria-labelledby="createSubseccionModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="createSeccionModalLabel">Crear Sección</h5>
+                    <h5 class="modal-title" id="createSubseccionModalLabel">Crear Subsección</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('paginas.secciones.store', $pagina) }}" method="POST">
+                <form action="{{ route('secciones.subsecciones.store', $seccion) }}" method="POST">
                     @csrf
                     <div class="modal-body">
                         <div class="mb-3">
@@ -183,7 +190,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Crear Sección</button>
+                        <button type="submit" class="btn btn-primary">Crear Subsección</button>
                     </div>
                 </form>
             </div>

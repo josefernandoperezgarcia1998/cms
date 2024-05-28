@@ -13,9 +13,16 @@ class Subseccion extends Model
         'seccion_id', 'titulo', 'slug', 'ordenamiento', 'activo'
     ];
 
+    protected $table = 'subsecciones';
+
     public function archivos()
     {
-        return $this->morphMany(Archivo::class, 'archivable');
+        return $this->hasMany(Archivo::class);
+    }
+
+    public function enlaces()
+    {
+        return $this->hasMany(Enlace::class);
     }
 
     public function seccion()

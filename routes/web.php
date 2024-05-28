@@ -32,6 +32,16 @@ Route::resource('paginas.secciones', SeccionController::class)->parameters([
 // Contenido (Archivos y Enlacse) de secciones
 Route::get('paginas/{pagina}/secciones/{seccion}/contenido', [SeccionController::class, 'contenido'])->name('secciones.contenido');
 
+// Rutas anidadas para subsecciones dentro de secciones
+Route::resource('secciones.subsecciones', SubseccionController::class)->parameters([
+    'secciones' => 'seccion',
+    'subsecciones' => 'subseccion',
+])->except(['show']);
+
+// Contenido (Archivos y Enlaces) de subsecciones
+Route::get('secciones/{seccion}/subsecciones/{subseccion}/contenido', [SubseccionController::class, 'contenido'])->name('subsecciones.contenido');
+
+
 
 /* ---------------------------------------- */
 
