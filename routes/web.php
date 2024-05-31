@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 
 // Módulo de paginas
 Route::resource('paginas', PaginaController::class);
+Route::get('{slug}', [PaginaController::class, 'show'])->name('pagina.publica.show');
 
 // CKEDITOR imágenes
 Route::post('ckeditor/upload', [PaginaController::class, 'uploadImage'])->name('ckeditor.upload');

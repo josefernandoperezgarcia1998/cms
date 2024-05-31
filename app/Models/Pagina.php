@@ -13,7 +13,9 @@ class Pagina extends Model
         'titulo', 'imagen_destacada', 'contenido', 'slug', 'seo_titulo', 'seo_descripcion', 'seo_keywords', 'fecha_actualizacion', 'fuente', 'activo'
     ];
 
-    protected $dates = ['fecha_actualizacion'];
+    protected $casts = [
+        'fecha_actualizacion' => 'datetime',
+    ];
     
     public function archivos()
     {

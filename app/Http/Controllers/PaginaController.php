@@ -73,9 +73,44 @@ class PaginaController extends Controller
         return view('admin.paginas.edit', compact('pagina', 'archivos', 'enlaces'));
     }    
 
-    public function show(Pagina $pagina)
+    public function show($slug)
     {
-        return view('admin.paginas.show', compact('pagina'));
+        // Encontrar la página por su slug
+        $pagina = Pagina::where('slug', $slug)->firstOrFail();
+    
+        // Cargar las relaciones con condiciones de activo y ordenamiento usando with
+        $pagina->load([
+            'archivos' => function($query) {
+                $query->where('activo', 1)->orderBy('ordenamiento', 'asc');
+            },
+            'enlaces' => function($query) {
+                $query->where('activo', 1)->orderBy('ordenamiento', 'asc');
+            },
+            'secciones' => function($query) {
+                $query->where('activo', 1)->orderBy('ordenamiento', 'asc')
+                    ->with([
+                        'subsecciones' => function($query) {
+                            $query->where('activo', 1)->orderBy('ordenamiento', 'asc')
+                                ->with([
+                                    'archivos' => function($query) {
+                                        $query->where('activo', 1)->orderBy('ordenamiento', 'asc');
+                                    },
+                                    'enlaces' => function($query) {
+                                        $query->where('activo', 1)->orderBy('ordenamiento', 'asc');
+                                    }
+                                ]);
+                        },
+                        'archivos' => function($query) {
+                            $query->where('activo', 1)->orderBy('ordenamiento', 'asc');
+                        },
+                        'enlaces' => function($query) {
+                            $query->where('activo', 1)->orderBy('ordenamiento', 'asc');
+                        }
+                    ]);
+            }
+        ]);
+    
+        return view('admin/paginas/pagina-publica', compact('pagina'));
     }
 
     public function update(Request $request, Pagina $pagina)
